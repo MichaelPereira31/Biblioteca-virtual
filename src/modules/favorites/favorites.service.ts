@@ -6,12 +6,11 @@ import { PrismaService } from 'src/shared/database';
 @Injectable()
 export class FavoritesService {
   constructor(private readonly prismaService: PrismaService) {}
-  async create(createFavoriteDto: CreateFavoriteDto) {
+  async create(userId: string, createFavoriteDto: CreateFavoriteDto) {
     return await this.prismaService.favorite.create({
-      data: createFavoriteDto,
+      data: { userId, ...createFavoriteDto },
       include: {
         books: true,
-        user: true,
       },
     });
   }
@@ -21,7 +20,6 @@ export class FavoritesService {
       where: { userId: id },
       include: {
         books: true,
-        user: true,
       },
     });
   }
@@ -31,7 +29,6 @@ export class FavoritesService {
       where: { id },
       include: {
         books: true,
-        user: true,
       },
     });
 
@@ -45,7 +42,6 @@ export class FavoritesService {
       where: { id },
       include: {
         books: true,
-        user: true,
       },
     });
 
@@ -55,7 +51,6 @@ export class FavoritesService {
       where: { id },
       include: {
         books: true,
-        user: true,
       },
       data: updateFavoriteDto,
     });
