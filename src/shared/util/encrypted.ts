@@ -2,7 +2,7 @@ import { createCipheriv, randomBytes, scrypt } from 'crypto';
 import { promisify } from 'util';
 
 export async function encrypted(password: string, keyIv?: string) {
-  const iv = Buffer.from(keyIv, 'hex') ?? randomBytes(16);
+  const iv = keyIv ? Buffer.from(keyIv, 'hex') : randomBytes(16);
 
   const passwordGenerateKey = 'Nest';
 
