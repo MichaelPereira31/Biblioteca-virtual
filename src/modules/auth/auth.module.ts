@@ -13,7 +13,7 @@ import { PrismaService } from 'src/shared/database';
     JwtModule.register({
       global: true,
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '2d' },
+      signOptions: { expiresIn: '60s' },
     }),
   ],
   controllers: [AuthController],

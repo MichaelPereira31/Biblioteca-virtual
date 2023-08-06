@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
   Post,
   Put,
   UseGuards,
@@ -12,16 +11,17 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { AuthGuard } from '../auth/auth.guard';
-import { request } from 'express';
+import { AuthUser } from '../auth/auth.decorator';
+import { Authenticated } from '../auth/dto/authenticated-auth.dto';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) { }
+  constructor(private readonly userService: UserService) {}
 
+  @Get()
   @UseGuards(AuthGuard)
-  @Get(':id')
-  async findById(@Param('id') id: string) {
-    return await this.userService.findById(id);
+  async findById(@AuthUser() user: Authenticated) {
+    return await this.userService.findById(user.sub);
   }
 
   @Post()
@@ -29,15 +29,19 @@ export class UserController {
     return await this.userService.create(createUserDto);
   }
 
-  @Put(':id')
-  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return await this.userService.update(id, updateUserDto);
+  @UseGuards(AuthGuard)
+  @Put()
+  async update(
+    @Body() updateUserDto: UpdateUserDto,
+    @AuthUser() user: Authenticated,
+  ) {
+    return await this.userService.update(user.sub, updateUserDto);
   }
 
   @UseGuards(AuthGuard)
   @Delete()
-  async delete() {
-    await this.userService.delete(request['user'].sub);
+  async delete(@AuthUser() user: Authenticated) {
+    await this.userService.delete(user.sub);
 
     return { message: 'User deleted successfully' };
   }
