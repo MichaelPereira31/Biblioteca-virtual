@@ -9,12 +9,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { User } from '@prisma/client';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { AuthGuard } from '../auth/auth.guard';
-import { Request, request } from 'express';
-import { Authenticated } from '../auth/dto/authenticated-auth.dto copy';
+import { request } from 'express';
 
 @Controller('user')
 export class UserController {
@@ -39,8 +37,6 @@ export class UserController {
   @UseGuards(AuthGuard)
   @Delete()
   async delete() {
-    console.log(request, 'era qui ');
-    const user: Authenticated = request['user'];
     await this.userService.delete(request['user'].sub);
 
     return { message: 'User deleted successfully' };
