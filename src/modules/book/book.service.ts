@@ -14,7 +14,7 @@ export class BookService {
     const book = await this.prismaService.book.findMany({
       where: { title: createBookDto.title },
     });
-    console.log(book.length);
+
     if (book.length) {
       throw new BadRequestException(
         `Book ${createBookDto.title} already exists`,
