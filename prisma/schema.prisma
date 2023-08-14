@@ -11,12 +11,14 @@ datasource db {
 }
 
 model User {
-  id        String     @unique @default(uuid())
-  email     String     @unique
+  id        String   @unique @default(uuid())
+  email     String   @unique
   name      String
   password  String
-  createdAt DateTime   @default(now()) @map("created_at")
-  Favorite  Favorite[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  Favorite Favorite[]
 
   @@map("user")
 }
@@ -51,15 +53,15 @@ model Book {
 }
 
 model Favorite {
-  id     String @unique @default(uuid())
-  
+  id String @unique @default(uuid())
+
   user   User   @relation(fields: [userId], references: [id])
   userId String
 
-  books     Book     @relation(fields: [bookId], references: [id])
-  bookId    String
+  books  Book   @relation(fields: [bookId], references: [id])
+  bookId String
 
-  status    Status
+  status Status
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
