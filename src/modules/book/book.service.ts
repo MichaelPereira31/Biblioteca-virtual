@@ -6,20 +6,28 @@ import {
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { PrismaService } from 'src/shared/database';
+import { AuthorService } from '../author/author.service';
 
 @Injectable()
 export class BookService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly authorService: AuthorService,
+  ) {}
   async create(createBookDto: CreateBookDto) {
+    await this.authorService.findOne(createBookDto.authorId);
+
     const book = await this.prismaService.book.findMany({
       where: { title: createBookDto.title },
     });
 
+    console.log(book);
     if (book.length) {
       throw new BadRequestException(
         `Book ${createBookDto.title} already exists`,
       );
     }
+
     return await this.prismaService.book.create({ data: createBookDto });
   }
 
@@ -32,7 +40,7 @@ export class BookService {
   }
 
   async findOne(id: string) {
-    const book = await this.prismaService.book.findMany({
+    const book = await this.prismaService.book.findUnique({
       where: { id },
       include: {
         author: true,
@@ -47,7 +55,7 @@ export class BookService {
   }
 
   async update(id: string, updateBookDto: UpdateBookDto) {
-    const book = await this.prismaService.book.findMany({
+    const book = await this.prismaService.book.findUnique({
       where: { id },
     });
 
